@@ -67,6 +67,9 @@ public class FlightScheduleController {
 			flightScheduleServive.scheduleFlight(flightSchedule);
 			validate="Added successfully";
 		}
+		else {
+			throw new FlightScheduleNotFoundException(validate);
+		}
 		return validate;
 	}
 
@@ -167,6 +170,9 @@ public class FlightScheduleController {
 		if("valid data".equals(validate)) {
 			flightScheduleServive.modifyScheduledFlight(flightSchedule);
 			validate="modified successfully";
+		}
+		else {
+			throw new FlightScheduleNotFoundException(validate);
 		}
 		return validate;
 		

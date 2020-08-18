@@ -243,6 +243,8 @@ public class FlightScheduleService implements IFlightScheduleService{
 		
 		else if((arrivalTime.toLocalDate().compareTo(departureTime.toLocalDate())==0) && (arrivalTime.toLocalTime().compareTo(departureTime.toLocalTime())<0))
 			return "Arrival schedule cannot be less than departure schedule";
+		else if((arrivalTime.toLocalDate().compareTo(departureTime.toLocalDate())==0) && (arrivalTime.toLocalTime().compareTo(departureTime.toLocalTime())==0))
+			return "Arrival schedule cannot be same as departure schedule";
 		else
 			return "valid data";
 		

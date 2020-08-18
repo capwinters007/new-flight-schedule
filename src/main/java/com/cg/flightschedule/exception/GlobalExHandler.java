@@ -33,6 +33,7 @@ public class GlobalExHandler {
 	
 	@ExceptionHandler({FlightScheduleNotFoundException.class})
 	public ResponseEntity<String> handleException(RuntimeException ex) {
+		log.debug(ex.toString());
 		return new ResponseEntity<>(ex.toString(),HttpStatus.NOT_FOUND);
 	}
 

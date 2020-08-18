@@ -15,15 +15,15 @@ public class FlightScheduleNotFoundException extends RuntimeException{
 	 */
 	private static final long serialVersionUID = -212242984426439241L;
 	
-	private String msg;
+	private String message;
 	
-	public FlightScheduleNotFoundException(String msg) {
-		this.msg=msg;
+	public FlightScheduleNotFoundException(String message) {
+		this.message=message;
 	}
 	
 	@Override
 	public String toString() {
-		return msg;
+		return message;
 	}
 
 }
