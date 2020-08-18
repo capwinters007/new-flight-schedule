@@ -1,3 +1,11 @@
+/********************************************************************************************************************************************************************************
+	- Class Name           : Airport
+	- Author               : Capgemini
+	- Creation Date        : 13-8-2020
+	- Description          : It is a POJO class consisting of all the attributes of the entity, its getter and setter methods, constructor and overridden toString method.   
+
+********************************************************************************************************************************************************************************/
+
 package com.cg.flightschedule.entity;
 
 import javax.persistence.Column;

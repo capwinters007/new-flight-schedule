@@ -1,3 +1,11 @@
+/********************************************************************************************************************************************************************************
+	- Class Name           : FlightScheduleService
+	- Author               : Capgemini
+	- Creation Date        : 13-8-2020
+	- Description          : This class responsible for all the business logic related to flight Schedule and implements IFlightScheduleService interface.  
+
+********************************************************************************************************************************************************************************/
+
 package com.cg.flightschedule.services;
 
 
@@ -40,8 +48,15 @@ public class FlightScheduleService implements IFlightScheduleService{
 	@Autowired
 	IAirportRepository airportReposidtory;
 	
-	@Autowired
-	IFlightService flightService;
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : scheduleFlight
+		- Input Parameters     : FlightSchedule flightSchedule
+		- Return type          : void
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This method is responsible for adding data into database by calling save method of IFlightScheduleRepository interface.
+
+	*****************************************************************************************************************************************************************************/
 	
 	@Override
 	@Transactional
@@ -49,7 +64,7 @@ public class FlightScheduleService implements IFlightScheduleService{
 		
 		log.debug("Inside scheduleFlight function");
 		
-		Optional<Flight> flightOpt=flightService.viewFlight(flightSchedule.getFlight().getFlightNumber());
+		Optional<Flight> flightOpt=flightRepository.findById(flightSchedule.getFlight().getFlightNumber());
 		if(flightOpt.isPresent()) {
 		flightSchedule.setAvailableSeats(flightOpt.get().getSeatNumber());
 		scheduleRepository.save(flightSchedule.getSchedule());
@@ -57,6 +72,16 @@ public class FlightScheduleService implements IFlightScheduleService{
 		flightScheduleRepository.save(flightSchedule);
 		}
 	}
+	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : viewScheduledFlights
+		- Input Parameters     : int id
+		- Return type          : Optional<FlightSchedule>
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This method is responsible for returning flight schedule w.r.t. flight schedule ID by calling findById method of IFlightScheduleRepository interface.
+
+	 *****************************************************************************************************************************************************************************/
 	
 	@Override
 	@Transactional
@@ -66,6 +91,16 @@ public class FlightScheduleService implements IFlightScheduleService{
 		
 		return flightScheduleRepository.findById(id);
 	}
+
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : viewScheduledFlights
+		- Input Parameters     : Airport arrival, Airport destination, LocalDate date
+		- Return type          : List<FlightSchedule>
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This method is responsible for returning scheduled flights on a given date between given source and destination airport.
+
+	 *****************************************************************************************************************************************************************************/
 	
 	@Override
 	@Transactional
@@ -89,6 +124,16 @@ public class FlightScheduleService implements IFlightScheduleService{
 				
 	}
 	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : deleteScheduledFlights
+		- Input Parameters     : int id
+		- Return type          : void
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This method is responsible for deleting flight schedule w.r.t. ID by calling deleteById method of IFlightScheduleRepository interface.
+
+	*****************************************************************************************************************************************************************************/
+	
 	@Override
 	@Transactional
 	public void deleteScheduledFlight(int id) {
@@ -103,6 +148,16 @@ public class FlightScheduleService implements IFlightScheduleService{
 		}
 	}
 	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : modifyScheduledFlights
+		- Input Parameters     : FlightSchedule flightSchedule
+		- Return type          : void
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This method is responsible for updating flight schedule in database by calling save method from IFlightScheduleRepository interface.
+
+	 *****************************************************************************************************************************************************************************/
+	
 	@Override
 	@Transactional
 	public void modifyScheduledFlight(FlightSchedule flightSchedule) {
@@ -115,6 +170,16 @@ public class FlightScheduleService implements IFlightScheduleService{
 		
 	}
 	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : viewScheduledFlights
+		- Input Parameters     : N/A
+		- Return type          : List<FlightSchedule>
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This method is responsible for returning all the data of flight schedule from database by calling findAll method of IFlightScheduleRepository interface.
+
+	 *****************************************************************************************************************************************************************************/
+	
 	@Override
 	@Transactional
 	public List<FlightSchedule> viewScheduledFlights(){
@@ -125,6 +190,16 @@ public class FlightScheduleService implements IFlightScheduleService{
 				
 		
 	}
+	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : validateScheduledFlight
+		- Input Parameters     : FlightSchedule flightSchedule
+		- Return type          : String
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This method is responsible for validating all the parameters of FlightSchedule object.
+
+	 *****************************************************************************************************************************************************************************/	
 	
 	@Override
 	@Transactional
@@ -163,9 +238,13 @@ public class FlightScheduleService implements IFlightScheduleService{
 		if(status2<1) {
 			return "Departure date should be greater than present date";
 		}
+		if(arrivalTime.toLocalDate().compareTo(departureTime.toLocalDate())<0)
+			return "Arrival schedule cannot be less than departure schedule";
 		
-		
-		return "valid data";
+		else if((arrivalTime.toLocalDate().compareTo(departureTime.toLocalDate())==0) && (arrivalTime.toLocalTime().compareTo(departureTime.toLocalTime())<0))
+			return "Arrival schedule cannot be less than departure schedule";
+		else
+			return "valid data";
 		
 		
 	}

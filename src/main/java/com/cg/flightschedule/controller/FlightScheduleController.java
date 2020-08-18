@@ -1,3 +1,11 @@
+/********************************************************************************************************************************************************************************
+	- Class Name           : FlightScheduleController
+	- Author               : Capgemini
+	- Creation Date        : 13-8-2020
+	- Description          : This class consists of end points to manage the flight schedule
+
+********************************************************************************************************************************************************************************/
+
 package com.cg.flightschedule.controller;
 
 
@@ -36,9 +44,20 @@ public class FlightScheduleController {
 	@Autowired
 	IAirportService airportService;
 	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : addFlightSchedule
+		- Input Parameters     : FlightSchedule flightSchedule
+		- Return type          : String
+		- End point URL        : /add
+		- Request Method type  : PostMapping
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This is responsible of calling the scheduleFlight method of FlightScheduleService method to persist the FlightSchedule into the database.
 
+	 *****************************************************************************************************************************************************************************/
+	
 	@PostMapping(path="/add")
-	public String add(@RequestBody FlightSchedule flightSchedule)
+	public String addFlightSchedule(@RequestBody FlightSchedule flightSchedule)
 	{
 		log.debug("Inside add method in controller class");
 		
@@ -50,9 +69,21 @@ public class FlightScheduleController {
 		}
 		return validate;
 	}
-	
+
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : getFlightOnDate
+		- Input Parameters     : String source, String destination, String date
+		- Return type          : List<FlightSchedule>
+		- End point URL        : /viewByAirport
+		- Request Method type  : GetMapping
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This Method return the list of flights scheduled on a particular date between particular source and destination airports.
+
+	*****************************************************************************************************************************************************************************/	
+
 	@GetMapping("/viewByAirport")
-	public List<FlightSchedule> getFlightOnDate(@RequestParam("source")String source,@RequestParam("destination") String destination,@RequestParam("date")String date) throws FlightScheduleNotFoundException{
+	public List<FlightSchedule> getFlightOnDate(@RequestParam("source")String source,@RequestParam("destination") String destination,@RequestParam("date")String date){
 		
 		Airport airport1=null;
 		Airport airport2=null;
@@ -62,32 +93,51 @@ public class FlightScheduleController {
 		
 		if(optAirport1.isPresent()) 
 			airport1=optAirport1.get();
+		else
+			throw new FlightScheduleNotFoundException("No such source airport exists");
+		
 		if(optAirport2.isPresent())
 			airport2=optAirport2.get();
+		else
+			throw new FlightScheduleNotFoundException("No such destination airport exists");
 		
 		LocalDate date2=LocalDate.parse(date);
 		
 		if(date2.compareTo(LocalDate.now())<1) {
-			throw new FlightScheduleNotFoundException();
+			throw new FlightScheduleNotFoundException("Date cannot be equal to present date");
 		}
 		
 		List<FlightSchedule> flightScheduleList=flightScheduleServive.viewScheduledFlights(airport1,airport2,date2);
 		
 		if(flightScheduleList.isEmpty()) {
-			throw new FlightScheduleNotFoundException();
+			throw new FlightScheduleNotFoundException("No flights found!!");
 		}
 		
 		return flightScheduleList;
 	}
+	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : deleteFlightSchedule
+		- Input Parameters     : int id
+		- Return type          : String
+		- End point URL        : /deleteFlightSchedule
+		- Request Method type  : GetMapping
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This Method first checks whether the flightSchedule of particular id exists in database then calls deleteScheduledFlight method from
+	                         	 FlightScheduleService to delete the entry from the database.
+
+	*****************************************************************************************************************************************************************************/
+	
 	@GetMapping("/deleteFlightSchedule")
-	public String delete(@RequestParam("id") int id) throws FlightScheduleNotFoundException {
+	public String deleteFlightSchedule(@RequestParam("id") int id){
 		
 		log.debug("Inside delete method in controller class");
 		
 		Optional<FlightSchedule> flightScheduleOpt=flightScheduleServive.viewScheduledFlights(id);
 		
 		if(!flightScheduleOpt.isPresent()) {
-			throw new FlightScheduleNotFoundException();
+			throw new FlightScheduleNotFoundException("Flight Schedule not found");
 		}
 		
 		flightScheduleServive.deleteScheduledFlight(id);
@@ -95,29 +145,69 @@ public class FlightScheduleController {
 		return "Deleted succesfully";
 	}
 	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : updateFlightSchedule
+		- Input Parameters     : FlightSchedule flightSchedule
+		- Return type          : String
+		- End point URL        : /update
+		- Request Method type  : PostMapping
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This Method calls modifyScheduleFlight method from FlightScheduleService and updates the data in the database.
+
+	*****************************************************************************************************************************************************************************/
+	
 	@PostMapping("/update")
-	public String update(@RequestBody FlightSchedule flightSchedule) {
+	public String updateFlightSchedule(@RequestBody FlightSchedule flightSchedule) {
 		
 		log.debug("Inside update method in controller class");
 		
-		flightScheduleServive.modifyScheduledFlight(flightSchedule);
+		String validate=flightScheduleServive.validateScheduledFlight(flightSchedule);
 		
-		return "updated";
+		if("valid data".equals(validate)) {
+			flightScheduleServive.modifyScheduledFlight(flightSchedule);
+			validate="modified successfully";
+		}
+		return validate;
+		
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : getFlightScheduleById
+		- Input Parameters     : int id
+		- Return type          : FlightSchedule
+		- End point URL        : /viewById
+		- Request Method type  : GetMapping
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This Method calls viewScheduledFlights from FlightScheduleService to retrieve flight schedule w.r.t flight schedule ID.
+
+	*****************************************************************************************************************************************************************************/
 		
 	}
 	@GetMapping("/viewById")
-	public FlightSchedule getFlightScheduleById(@RequestParam("id")int id) throws FlightScheduleNotFoundException{
+	public FlightSchedule getFlightScheduleById(@RequestParam("id")int id){
 		
 		log.debug("Inside getFlightScheduleById in controller class");
 		
 		Optional<FlightSchedule> flightScheduleOpt=flightScheduleServive.viewScheduledFlights(id);
 		
 		if(!flightScheduleOpt.isPresent()) {
-			throw new FlightScheduleNotFoundException();
+			throw new FlightScheduleNotFoundException("Flight schedule not found");
 		}
 		
 		return flightScheduleOpt.get();
 	}
+	
+	/*****************************************************************************************************************************************************************************
+		- Method Name          : getAllFlightSchedule
+		- Input Parameters     : N/A
+		- Return type          : List<FlightSchedule>
+		- End point URL        : /viewAll
+		- Request Method type  : GetMapping
+		- Author               : Capgemini
+		- Creation Date        : 13-8-2020
+		- Description          : This Method calls viewScheduledFlights from FlightScheduleService to retrieve all the flight schedules in the database.
+
+	*****************************************************************************************************************************************************************************/
 	
 	@GetMapping("/viewAll")
 	public List<FlightSchedule> getAllFlightSchedule(){
