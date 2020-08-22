@@ -39,7 +39,7 @@ public class FlightScheduleController {
 	private static final Logger log=LoggerFactory.getLogger(FlightScheduleController.class);
 	
 	@Autowired
-	IFlightScheduleService flightScheduleServive;
+	IFlightScheduleService flightScheduleService;
 	
 	@Autowired
 	IAirportService airportService;
@@ -61,11 +61,10 @@ public class FlightScheduleController {
 	{
 		log.debug("Inside add method in controller class");
 		
-		String validate=flightScheduleServive.validateScheduledFlight(flightSchedule);
+		String validate=flightScheduleService.validateScheduledFlight(flightSchedule);
 		
 		if("valid data".equals(validate)) {
-			flightScheduleServive.scheduleFlight(flightSchedule);
-			validate="Added successfully";
+			validate=flightScheduleService.scheduleFlight(flightSchedule);
 		}
 		else {
 			throw new FlightScheduleNotFoundException(validate);
@@ -110,7 +109,7 @@ public class FlightScheduleController {
 			throw new FlightScheduleNotFoundException("Date cannot be equal to present date");
 		}
 		
-		List<FlightSchedule> flightScheduleList=flightScheduleServive.viewScheduledFlights(airport1,airport2,date2);
+		List<FlightSchedule> flightScheduleList=flightScheduleService.viewScheduledFlights(airport1,airport2,date2);
 		
 		if(flightScheduleList.isEmpty()) {
 			throw new FlightScheduleNotFoundException("No flights found!!");
@@ -137,15 +136,15 @@ public class FlightScheduleController {
 		
 		log.debug("Inside delete method in controller class");
 		
-		Optional<FlightSchedule> flightScheduleOpt=flightScheduleServive.viewScheduledFlights(id);
+		Optional<FlightSchedule> flightScheduleOpt=flightScheduleService.viewScheduledFlights(id);
 		
 		if(!flightScheduleOpt.isPresent()) {
 			throw new FlightScheduleNotFoundException("Flight Schedule not found");
 		}
 		
-		flightScheduleServive.deleteScheduledFlight(id);
+		String message=flightScheduleService.deleteScheduledFlight(id);
 		
-		return "Deleted succesfully";
+		return message;
 	}
 	
 	/*****************************************************************************************************************************************************************************
@@ -165,11 +164,10 @@ public class FlightScheduleController {
 		
 		log.debug("Inside update method in controller class");
 		
-		String validate=flightScheduleServive.validateScheduledFlight(flightSchedule);
+		String validate=flightScheduleService.validateScheduledFlight(flightSchedule);
 		
 		if("valid data".equals(validate)) {
-			flightScheduleServive.modifyScheduledFlight(flightSchedule);
-			validate="modified successfully";
+			validate=flightScheduleService.modifyScheduledFlight(flightSchedule);
 		}
 		else {
 			throw new FlightScheduleNotFoundException(validate);
@@ -194,7 +192,7 @@ public class FlightScheduleController {
 		
 		log.debug("Inside getFlightScheduleById in controller class");
 		
-		Optional<FlightSchedule> flightScheduleOpt=flightScheduleServive.viewScheduledFlights(id);
+		Optional<FlightSchedule> flightScheduleOpt=flightScheduleService.viewScheduledFlights(id);
 		
 		if(!flightScheduleOpt.isPresent()) {
 			throw new FlightScheduleNotFoundException("Flight schedule not found");
@@ -217,7 +215,7 @@ public class FlightScheduleController {
 	
 	@GetMapping("/viewAll")
 	public List<FlightSchedule> getAllFlightSchedule(){
-		return flightScheduleServive.viewScheduledFlights();
+		return flightScheduleService.viewScheduledFlights();
 	}
 	
 }

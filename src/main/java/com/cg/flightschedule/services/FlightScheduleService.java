@@ -60,7 +60,7 @@ public class FlightScheduleService implements IFlightScheduleService{
 	
 	@Override
 	@Transactional
-	public void scheduleFlight(FlightSchedule flightSchedule) {
+	public String scheduleFlight(FlightSchedule flightSchedule) {
 		
 		log.debug("Inside scheduleFlight function");
 		
@@ -71,6 +71,7 @@ public class FlightScheduleService implements IFlightScheduleService{
 		
 		flightScheduleRepository.save(flightSchedule);
 		}
+		return "Added successfully";
 	}
 	
 	/*****************************************************************************************************************************************************************************
@@ -136,7 +137,7 @@ public class FlightScheduleService implements IFlightScheduleService{
 	
 	@Override
 	@Transactional
-	public void deleteScheduledFlight(int id) {
+	public String deleteScheduledFlight(int id) {
 		
 		log.debug("Inside deleteScheduledFlight function in FlightScheduleService class");
 		
@@ -146,6 +147,7 @@ public class FlightScheduleService implements IFlightScheduleService{
 		scheduleRepository.deleteById(optFlightSchedule.get().getSchedule().getScheduleId());
 		flightScheduleRepository.deleteById(id);
 		}
+		return "Deleted successfully";
 	}
 	
 	/*****************************************************************************************************************************************************************************
@@ -160,13 +162,15 @@ public class FlightScheduleService implements IFlightScheduleService{
 	
 	@Override
 	@Transactional
-	public void modifyScheduledFlight(FlightSchedule flightSchedule) {
+	public String modifyScheduledFlight(FlightSchedule flightSchedule) {
 		
 		log.debug("Inside modifyScheduledFlight function in FlightScheduleService class");
 		
 		scheduleRepository.save(flightSchedule.getSchedule());
 		
 		flightScheduleRepository.save(flightSchedule);
+		
+		return "Modified successfully";
 		
 	}
 	

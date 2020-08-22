@@ -18,15 +18,15 @@ import com.cg.flightschedule.entity.FlightSchedule;
 
 public interface IFlightScheduleService {
 	
-	public void scheduleFlight(FlightSchedule flightSchedule);
+	public String scheduleFlight(FlightSchedule flightSchedule);
 	
 	public Optional<FlightSchedule> viewScheduledFlights(int id);
 	
 	public List<FlightSchedule> viewScheduledFlights(Airport arrival,Airport destination,LocalDate date);
 	
-	public void deleteScheduledFlight(int id);
+	public String deleteScheduledFlight(int id);
 	
-	public void modifyScheduledFlight(FlightSchedule flightSchedule);
+	public String modifyScheduledFlight(FlightSchedule flightSchedule);
 	
 	public List<FlightSchedule> viewScheduledFlights();
 	
