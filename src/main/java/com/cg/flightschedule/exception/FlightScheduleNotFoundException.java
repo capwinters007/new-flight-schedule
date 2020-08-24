@@ -15,7 +15,7 @@ public class FlightScheduleNotFoundException extends RuntimeException{
 	 */
 	private static final long serialVersionUID = -212242984426439241L;
 	
-	private String message;
+	private final String message;
 	
 	public FlightScheduleNotFoundException(String message) {
 		this.message=message;

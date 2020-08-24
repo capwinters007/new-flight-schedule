@@ -206,7 +206,6 @@ public class FlightScheduleService implements IFlightScheduleService{
 	 *****************************************************************************************************************************************************************************/	
 	
 	@Override
-	@Transactional
 	public String validateScheduledFlight(FlightSchedule flightSchedule){
 		
 		Flight flight=flightSchedule.getFlight();
@@ -216,19 +215,6 @@ public class FlightScheduleService implements IFlightScheduleService{
 		
 		if(!flightOpt.isPresent()) {
 			return "No Flight with flight Number "+flight.getFlightNumber()+" exists!!";
-		}
-		
-		
-		Airport source=schedule.getSourceAirport();
-		Optional<Airport> airportSourceOpt=airportReposidtory.findById(source.getAirportCode());
-		if(!airportSourceOpt.isPresent()) {
-			return "No source airport exists of code "+source.getAirportCode();
-		}
-		
-		Airport destination=schedule.getDestinationAirport();
-		Optional<Airport> airportDestinationOpt=airportReposidtory.findById(destination.getAirportCode());
-		if(!airportDestinationOpt.isPresent()) {
-			return "No destination airport exists of code "+destination.getAirportCode();
 		}
 		
 		LocalDateTime arrivalTime=schedule.getArrivalTime();

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExHandler {
 	
-	 static final Logger log=LoggerFactory.getLogger(GlobalExHandler.class);
+	 private static final Logger log=LoggerFactory.getLogger(GlobalExHandler.class);
 
 	/*****************************************************************************************************************************************************************************
 		- Method Name          : handleException
